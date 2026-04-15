@@ -110,7 +110,29 @@ public class CreateOpportunities {
 		}
 
 		// Interact In Popup
-		driver.findElement(By.linkText("vtiger")).click();
+		FileInputStream fis3 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb2 = WorkbookFactory.create(fis3);
+		
+		// Get access of Sheet
+		Sheet sheet2 = wb2.getSheet("testdata");
+		
+		// Get access of Row
+		Row row2 = sheet2.getRow(2);
+		
+		// Get access of Cell
+		Cell cell2 = row2.getCell(1);
+
+		// Get the data
+		String data2 = cell2.getStringCellValue();
+
+		System.out.println(data2);
+
+		// To close the workbook
+		wb2.close();
+		
+		driver.findElement(By.linkText(data2)).click();
 
 		Thread.sleep(3000);
 
@@ -123,31 +145,31 @@ public class CreateOpportunities {
 		// To select Specific Value from Sales Stage Dropdown
 		WebElement salesStage = driver.findElement(By.name("sales_stage"));
 		
-		FileInputStream fis3 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+		FileInputStream fis4 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
 		// Get the Access of Workbook
-		Workbook wb2 = WorkbookFactory.create(fis3);
+		Workbook wb3 = WorkbookFactory.create(fis4);
 		
 		// Get access of Sheet
-		Sheet sheet2 = wb2.getSheet("testdata");
+		Sheet sheet3 = wb3.getSheet("testdata");
 		
 		// Get access of Row
-		Row row2 = sheet2.getRow(1);
+		Row row3 = sheet3.getRow(2);
 		
 		// Get access of Cell
-		Cell cell2 = row2.getCell(4);
+		Cell cell3 = row3.getCell(4);
 
 		// Get the data
-		String data2 = cell2.getStringCellValue();
+		String data3 = cell3.getStringCellValue();
 
-		System.out.println(data2);
+		System.out.println(data3);
 
 		// To close the workbook
 		wb.close();
 
 		Select sel = new Select(salesStage);
 
-		sel.selectByValue(data2);
+		sel.selectByValue(data3);
 
 		// To Click on Save Button
 		driver.findElement(By.cssSelector("input[type='submit'][value='  Save  ']")).click();
