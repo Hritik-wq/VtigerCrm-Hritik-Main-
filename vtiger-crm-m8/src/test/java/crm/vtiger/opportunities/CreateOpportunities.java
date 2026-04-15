@@ -6,6 +6,11 @@ import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -54,9 +59,31 @@ public class CreateOpportunities {
 
 //		fill form
 		WebElement opporField = driver.findElement(By.name("potentialname"));
+		
+		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb = WorkbookFactory.create(fis2);
+		
+		// Get access of Sheet
+		Sheet sheet = wb.getSheet("testdata");
+		
+		// Get access of Row
+		Row row = sheet.getRow(1);
+		
+		// Get access of Cell
+		Cell cell = row.getCell(0);
+
+		// Get the data
+		String data = cell.getStringCellValue();
+
+		System.out.println(data);
+
+		// To close the workbook
+		wb.close();
 
 		// Store the String Opportunity Name
-		String opporName = "21 din me paisa double";
+		String opporName = data;
 		opporField.sendKeys(opporName);
 
 		// Need to Change Window to select Link
@@ -95,10 +122,32 @@ public class CreateOpportunities {
 
 		// To select Specific Value from Sales Stage Dropdown
 		WebElement salesStage = driver.findElement(By.name("sales_stage"));
+		
+		FileInputStream fis3 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb2 = WorkbookFactory.create(fis3);
+		
+		// Get access of Sheet
+		Sheet sheet2 = wb2.getSheet("testdata");
+		
+		// Get access of Row
+		Row row2 = sheet2.getRow(1);
+		
+		// Get access of Cell
+		Cell cell2 = row2.getCell(4);
+
+		// Get the data
+		String data2 = cell2.getStringCellValue();
+
+		System.out.println(data2);
+
+		// To close the workbook
+		wb.close();
 
 		Select sel = new Select(salesStage);
 
-		sel.selectByValue("Qualification");
+		sel.selectByValue(data2);
 
 		// To Click on Save Button
 		driver.findElement(By.cssSelector("input[type='submit'][value='  Save  ']")).click();

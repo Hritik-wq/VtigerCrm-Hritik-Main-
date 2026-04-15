@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Properties;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -53,8 +58,30 @@ public class CreateProducts {
 
 //		fill form
 		WebElement prodField = driver.findElement(By.name("productname"));
+		
+		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		String prodName = "Samay Raina";
+		// Get the Access of Workbook
+		Workbook wb = WorkbookFactory.create(fis2);
+		
+		// Get access of Sheet
+		Sheet sheet = wb.getSheet("testdata");
+		
+		// Get access of Row
+		Row row = sheet.getRow(2);
+		
+		// Get access of Cell
+		Cell cell = row.getCell(2);
+
+		// Get the data
+		String data = cell.getStringCellValue();
+
+		System.out.println(data);
+
+		// To close the workbook
+		wb.close();
+
+		String prodName = data;
 		prodField.sendKeys(prodName);
 
 		// Assigned To Radio Button

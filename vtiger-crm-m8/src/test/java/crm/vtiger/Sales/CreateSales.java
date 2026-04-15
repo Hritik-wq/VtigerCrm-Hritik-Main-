@@ -6,6 +6,11 @@ import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -59,16 +64,60 @@ public class CreateSales {
 
 //		fill form
 		WebElement salesField = driver.findElement(By.name("subject"));
+		
+		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		String salesName = "SO_Sales";
+		// Get the Access of Workbook
+		Workbook wb = WorkbookFactory.create(fis2);
+		
+		// Get access of Sheet
+		Sheet sheet = wb.getSheet("testdata");
+		
+		// Get access of Row
+		Row row = sheet.getRow(2);
+		
+		// Get access of Cell
+		Cell cell = row.getCell(5);
+
+		// Get the data
+		String data = cell.getStringCellValue();
+
+		System.out.println(data);
+
+		// To close the workbook
+		wb.close();
+
+		String salesName = data;
 		salesField.sendKeys(salesName);
 
 		// To select Specific Value from Status
 		WebElement status = driver.findElement(By.name("sostatus"));
+		
+		FileInputStream fis3 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb2 = WorkbookFactory.create(fis3);
+		
+		// Get access of Sheet
+		Sheet sheet2 = wb2.getSheet("testdata");
+		
+		// Get access of Row
+		Row row2 = sheet2.getRow(1);
+		
+		// Get access of Cell
+		Cell cell2 = row2.getCell(9);
+
+		// Get the data
+		String data2 = cell2.getStringCellValue();
+
+		System.out.println(data2);
+
+		// To close the workbook
+		wb2.close();
 
 		Select sel = new Select(status);
 
-		sel.selectByValue("Delivered");
+		sel.selectByValue(data2);
 
 		// Assigned To Radio Button
 		driver.findElement(By.xpath("//input[@type='radio'][1]"));
@@ -100,8 +149,30 @@ public class CreateSales {
 			}
 		}
 
+		FileInputStream fis4 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb3 = WorkbookFactory.create(fis4);
+		
+		// Get access of Sheet
+		Sheet sheet3 = wb3.getSheet("testdata");
+		
+		// Get access of Row
+		Row row3 = sheet3.getRow(2);
+		
+		// Get access of Cell
+		Cell cell3 = row3.getCell(1);
+
+		// Get the data
+		String data3 = cell3.getStringCellValue();
+
+		System.out.println(data3);
+
+		// To close the workbook
+		wb3.close();
+		
 		// Interact In Popup
-		driver.findElement(By.linkText("vtiger")).click();
+		driver.findElement(By.linkText(data3)).click();
 		Alert ale = driver.switchTo().alert();
 		ale.accept();
 
@@ -116,6 +187,29 @@ public class CreateSales {
 		// item name in item details open window
 
 		String parentWindow2 = driver.getWindowHandle();
+		
+		FileInputStream fis5 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb4 = WorkbookFactory.create(fis5);
+		
+		// Get access of Sheet
+		Sheet sheet4 = wb4.getSheet("testdata");
+		
+		// Get access of Row
+		Row row4 = sheet4.getRow(4);
+		
+		// Get access of Cell
+		Cell cell4 = row4.getCell(7);
+
+		// Get the data
+		String data4 = cell4.getStringCellValue();
+
+		System.out.println(data4);
+
+		// To close the workbook
+		wb4.close();
+		
 		driver.findElement(By.id("searchIcon1")).click();
 		Thread.sleep(2000);
 
@@ -135,15 +229,37 @@ public class CreateSales {
 		}
 
 		// Select item name in Select Product Popup
-		driver.findElement(By.linkText("Vtiger 5 Users Pack")).click();
+		driver.findElement(By.linkText(data4)).click();
 
 		Thread.sleep(3000);
 
 		// Switch back to parent
 		driver.switchTo().window(parentWindow);
-
+		
 		// Enter Quantity
-		driver.findElement(By.id("qty1")).sendKeys("2");
+		FileInputStream fis6 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb5 = WorkbookFactory.create(fis6);
+		
+		// Get access of Sheet
+		Sheet sheet5 = wb5.getSheet("testdata");
+		
+		// Get access of Row
+		Row row5 = sheet5.getRow(1);
+		
+		// Get access of Cell
+		Cell cell5 = row5.getCell(8);
+
+		// Get the data
+		String data5 = cell5.getStringCellValue();
+
+		System.out.println(data5);
+
+		// To close the workbook
+		wb5.close();
+		
+		driver.findElement(By.id("qty1")).sendKeys(data5);
 
 		driver.findElement(By.cssSelector("input[type='submit'][value='  Save  ']")).click();
 

@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Properties;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -54,13 +59,36 @@ public class CreateOrgTest {
 //		fill form
 		WebElement orgField = driver.findElement(By.name("accountname"));
 
-		String orgName = "awp";
+		
+		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+
+		// Get the Access of Workbook
+		Workbook wb = WorkbookFactory.create(fis2);
+		
+		// Get access of Sheet
+		Sheet sheet = wb.getSheet("testdata");
+		
+		// Get access of Row
+		Row row = sheet.getRow(1);
+		
+		// Get access of Cell
+		Cell cell = row.getCell(1);
+
+		// Get the data
+		String data = cell.getStringCellValue();
+
+		System.out.println(data);
+
+		// To close the workbook
+		wb.close();
+		
+		String orgName = data;
 		orgField.sendKeys(orgName);
 
 		driver.findElement(By.cssSelector("input[type='button'][value='  Save  ']")).click();
 
 //		verify Opportunity
-		String actOppName = driver.findElement(By.id("dtlview_Opportunity Name")).getText();
+		String actOppName = driver.findElement(By.id("dtlview_Organization Name")).getText();
 
 		if (actOppName.equals(orgName)) {
 			System.out.println("Organization created successfullyy !!!!");
