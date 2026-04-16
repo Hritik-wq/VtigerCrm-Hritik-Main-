@@ -1,21 +1,15 @@
 package crm.vtiger.opportunities;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Properties;
 import java.util.Set;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
+
+import generic_utility.FileUtility;
 
 public class CreateOpportunities {
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -24,17 +18,11 @@ public class CreateOpportunities {
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
 
-//		step 1:> create a Java Rep. Object of the physical file
-		FileInputStream fis = new FileInputStream("./src/test/resources/cd.properties");
-
-//		step 2:> by using load(), load all the keys
-		Properties pObj = new Properties();
-		pObj.load(fis);
-
-//		step 3:> by using getProperty("key") get the value by passing "key"
-		String URL = pObj.getProperty("url");
-		String USERNAME = pObj.getProperty("un");
-		String PASSWORD = pObj.getProperty("pwd");
+//		We Used Generic Utility Package and Used Fileutility.java to get the data from Properties File in one go
+		FileUtility fUtil = new FileUtility();
+		String URL = fUtil.getDataFromPropFile("url");
+		String USERNAME = fUtil.getDataFromPropFile("un");
+		String PASSWORD = fUtil.getDataFromPropFile("pwd");
 
 		System.out.println(URL);
 		System.out.println(USERNAME);
@@ -59,32 +47,11 @@ public class CreateOpportunities {
 
 //		fill form
 		WebElement opporField = driver.findElement(By.name("potentialname"));
-		
-		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		// Get the Access of Workbook
-		Workbook wb = WorkbookFactory.create(fis2);
-		
-		// Get access of Sheet
-		Sheet sheet = wb.getSheet("testdata");
-		
-		// Get access of Row
-		Row row = sheet.getRow(1);
-		
-		// Get access of Cell
-		Cell cell = row.getCell(0);
+		// Load test data from Excel for opportunityName
+		String orgName = fUtil.getDatafromExcelFile("testdata", 1, 1);
 
-		// Get the data
-		String data = cell.getStringCellValue();
-
-		System.out.println(data);
-
-		// To close the workbook
-		wb.close();
-
-		// Store the String Opportunity Name
-		String opporName = data;
-		opporField.sendKeys(opporName);
+		opporField.sendKeys(orgName);
 
 		// Need to Change Window to select Link
 
@@ -109,30 +76,10 @@ public class CreateOpportunities {
 			}
 		}
 
-		// Interact In Popup
-		FileInputStream fis3 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+		// Load test data from Excel for realtedField
+		String relatedTo = fUtil.getDatafromExcelFile("testdata", 1, 3);
 
-		// Get the Access of Workbook
-		Workbook wb2 = WorkbookFactory.create(fis3);
-		
-		// Get access of Sheet
-		Sheet sheet2 = wb2.getSheet("testdata");
-		
-		// Get access of Row
-		Row row2 = sheet2.getRow(2);
-		
-		// Get access of Cell
-		Cell cell2 = row2.getCell(1);
-
-		// Get the data
-		String data2 = cell2.getStringCellValue();
-
-		System.out.println(data2);
-
-		// To close the workbook
-		wb2.close();
-		
-		driver.findElement(By.linkText(data2)).click();
+		driver.findElement(By.linkText(relatedTo)).click();
 
 		Thread.sleep(3000);
 
@@ -144,40 +91,21 @@ public class CreateOpportunities {
 
 		// To select Specific Value from Sales Stage Dropdown
 		WebElement salesStage = driver.findElement(By.name("sales_stage"));
-		
-		FileInputStream fis4 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		// Get the Access of Workbook
-		Workbook wb3 = WorkbookFactory.create(fis4);
-		
-		// Get access of Sheet
-		Sheet sheet3 = wb3.getSheet("testdata");
-		
-		// Get access of Row
-		Row row3 = sheet3.getRow(2);
-		
-		// Get access of Cell
-		Cell cell3 = row3.getCell(4);
-
-		// Get the data
-		String data3 = cell3.getStringCellValue();
-
-		System.out.println(data3);
-
-		// To close the workbook
-		wb.close();
+		// Load test data from Excel for Sales Stage
+		String stage = fUtil.getDatafromExcelFile("testdata", 2, 4);
 
 		Select sel = new Select(salesStage);
 
-		sel.selectByValue(data3);
+		sel.selectByValue(stage);
 
 		// To Click on Save Button
 		driver.findElement(By.cssSelector("input[type='submit'][value='  Save  ']")).click();
 
-		// verify product
-		String actOpporName = driver.findElement(By.id("dtlview_Opportunity Name")).getText();
+		// verify organization
+		String actOrgName = driver.findElement(By.id("dtlview_Opportunity Name")).getText();
 
-		if (actOpporName.equals(opporName)) {
+		if (actOrgName.equals(orgName)) {
 			System.out.println("Opportunity created successfullyy !!!!");
 		} else {
 			System.out.println("Better luck next time... Dingeshhh");

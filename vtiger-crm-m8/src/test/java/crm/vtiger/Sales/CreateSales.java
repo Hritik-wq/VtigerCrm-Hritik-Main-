@@ -1,22 +1,16 @@
 package crm.vtiger.Sales;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Properties;
 import java.util.Set;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
+
+import generic_utility.FileUtility;
 
 public class CreateSales {
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -26,17 +20,11 @@ public class CreateSales {
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
 
-//		step 1:> create a Java Rep. Object of the physical file
-		FileInputStream fis = new FileInputStream("./src/test/resources/cd.properties");
-
-//		step 2:> by using load(), load all the keys
-		Properties pObj = new Properties();
-		pObj.load(fis);
-
-//		step 3:> by using getProperty("key") get the value by passing "key"
-		String URL = pObj.getProperty("url");
-		String USERNAME = pObj.getProperty("un");
-		String PASSWORD = pObj.getProperty("pwd");
+//		We Used Generic Utility Package and Used Fileutility.java to get the data from Properties File in one go
+		FileUtility fUtil = new FileUtility();
+		String URL = fUtil.getDataFromPropFile("url");
+		String USERNAME = fUtil.getDataFromPropFile("un");
+		String PASSWORD = fUtil.getDataFromPropFile("pwd");
 
 		System.out.println(URL);
 		System.out.println(USERNAME);
@@ -64,60 +52,20 @@ public class CreateSales {
 
 //		fill form
 		WebElement salesField = driver.findElement(By.name("subject"));
-		
-		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		// Get the Access of Workbook
-		Workbook wb = WorkbookFactory.create(fis2);
-		
-		// Get access of Sheet
-		Sheet sheet = wb.getSheet("testdata");
-		
-		// Get access of Row
-		Row row = sheet.getRow(2);
-		
-		// Get access of Cell
-		Cell cell = row.getCell(5);
-
-		// Get the data
-		String data = cell.getStringCellValue();
-
-		System.out.println(data);
-
-		// To close the workbook
-		wb.close();
-
-		String salesName = data;
+		// Select Subject from Excel File for Sales Order
+		String salesName = fUtil.getDatafromExcelFile("testdata", 2, 5);
 		salesField.sendKeys(salesName);
 
 		// To select Specific Value from Status
 		WebElement status = driver.findElement(By.name("sostatus"));
 		
-		FileInputStream fis3 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
-
-		// Get the Access of Workbook
-		Workbook wb2 = WorkbookFactory.create(fis3);
-		
-		// Get access of Sheet
-		Sheet sheet2 = wb2.getSheet("testdata");
-		
-		// Get access of Row
-		Row row2 = sheet2.getRow(1);
-		
-		// Get access of Cell
-		Cell cell2 = row2.getCell(9);
-
-		// Get the data
-		String data2 = cell2.getStringCellValue();
-
-		System.out.println(data2);
-
-		// To close the workbook
-		wb2.close();
+		// Select Status from Excel File -nGeneric Utility Package ---> Used Fileutility.java
+		String Status = fUtil.getDatafromExcelFile("testdata", 2, 9);
 
 		Select sel = new Select(status);
 
-		sel.selectByValue(data2);
+		sel.selectByValue(Status);
 
 		// Assigned To Radio Button
 		driver.findElement(By.xpath("//input[@type='radio'][1]"));
@@ -149,30 +97,11 @@ public class CreateSales {
 			}
 		}
 
-		FileInputStream fis4 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+		// Enter Organization Name from Excel - Generic Utility Package ---> Used Fileutility.java
+		String orgName = fUtil.getDatafromExcelFile("testdata", 2, 1);
 
-		// Get the Access of Workbook
-		Workbook wb3 = WorkbookFactory.create(fis4);
-		
-		// Get access of Sheet
-		Sheet sheet3 = wb3.getSheet("testdata");
-		
-		// Get access of Row
-		Row row3 = sheet3.getRow(2);
-		
-		// Get access of Cell
-		Cell cell3 = row3.getCell(1);
-
-		// Get the data
-		String data3 = cell3.getStringCellValue();
-
-		System.out.println(data3);
-
-		// To close the workbook
-		wb3.close();
-		
 		// Interact In Popup
-		driver.findElement(By.linkText(data3)).click();
+		driver.findElement(By.linkText(orgName)).click();
 		Alert ale = driver.switchTo().alert();
 		ale.accept();
 
@@ -187,29 +116,9 @@ public class CreateSales {
 		// item name in item details open window
 
 		String parentWindow2 = driver.getWindowHandle();
-		
-		FileInputStream fis5 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		// Get the Access of Workbook
-		Workbook wb4 = WorkbookFactory.create(fis5);
-		
-		// Get access of Sheet
-		Sheet sheet4 = wb4.getSheet("testdata");
-		
-		// Get access of Row
-		Row row4 = sheet4.getRow(4);
-		
-		// Get access of Cell
-		Cell cell4 = row4.getCell(7);
+		String itemName = fUtil.getDatafromExcelFile("testdata", 4, 7);
 
-		// Get the data
-		String data4 = cell4.getStringCellValue();
-
-		System.out.println(data4);
-
-		// To close the workbook
-		wb4.close();
-		
 		driver.findElement(By.id("searchIcon1")).click();
 		Thread.sleep(2000);
 
@@ -229,37 +138,17 @@ public class CreateSales {
 		}
 
 		// Select item name in Select Product Popup
-		driver.findElement(By.linkText(data4)).click();
+		driver.findElement(By.linkText(itemName)).click();
 
 		Thread.sleep(3000);
 
 		// Switch back to parent
 		driver.switchTo().window(parentWindow);
-		
-		// Enter Quantity
-		FileInputStream fis6 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		// Get the Access of Workbook
-		Workbook wb5 = WorkbookFactory.create(fis6);
-		
-		// Get access of Sheet
-		Sheet sheet5 = wb5.getSheet("testdata");
-		
-		// Get access of Row
-		Row row5 = sheet5.getRow(1);
-		
-		// Get access of Cell
-		Cell cell5 = row5.getCell(8);
+		// Enter Quantity from Excel File - Generic Utility Package ---> Used Fileutility.java
+		String qty = fUtil.getDatafromExcelFile("testdata", 2, 8);
 
-		// Get the data
-		String data5 = cell5.getStringCellValue();
-
-		System.out.println(data5);
-
-		// To close the workbook
-		wb5.close();
-		
-		driver.findElement(By.id("qty1")).sendKeys(data5);
+		driver.findElement(By.id("qty1")).sendKeys(qty);
 
 		driver.findElement(By.cssSelector("input[type='submit'][value='  Save  ']")).click();
 

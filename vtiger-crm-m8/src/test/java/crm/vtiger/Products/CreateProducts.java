@@ -1,19 +1,13 @@
 package crm.vtiger.Products;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Properties;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+import generic_utility.FileUtility;
 
 public class CreateProducts {
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -21,18 +15,12 @@ public class CreateProducts {
 		WebDriver driver = new ChromeDriver();
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
-		
-//		step 1:> create a Java Rep. Object of the physical file
-		FileInputStream fis = new FileInputStream("./src/test/resources/cd.properties");
 
-//		step 2:> by using load(), load all the keys
-		Properties pObj = new Properties();
-		pObj.load(fis);
-
-//		step 3:> by using getProperty("key") get the value by passing "key"
-		String URL = pObj.getProperty("url");
-		String USERNAME = pObj.getProperty("un");
-		String PASSWORD = pObj.getProperty("pwd");
+//		We Used Generic Utility Package and Used Fileutility.java to get the data from Properties File in one go
+		FileUtility fUtil = new FileUtility();
+		String URL = fUtil.getDataFromPropFile("url");
+		String USERNAME = fUtil.getDataFromPropFile("un");
+		String PASSWORD = fUtil.getDataFromPropFile("pwd");
 
 		System.out.println(URL);
 		System.out.println(USERNAME);
@@ -58,30 +46,10 @@ public class CreateProducts {
 
 //		fill form
 		WebElement prodField = driver.findElement(By.name("productname"));
-		
-		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
 
-		// Get the Access of Workbook
-		Workbook wb = WorkbookFactory.create(fis2);
-		
-		// Get access of Sheet
-		Sheet sheet = wb.getSheet("testdata");
-		
-		// Get access of Row
-		Row row = sheet.getRow(2);
-		
-		// Get access of Cell
-		Cell cell = row.getCell(2);
+		// Load test data from Excel for productName
+		String prodName = fUtil.getDatafromExcelFile("testdata", 2, 2);
 
-		// Get the data
-		String data = cell.getStringCellValue();
-
-		System.out.println(data);
-
-		// To close the workbook
-		wb.close();
-
-		String prodName = data;
 		prodField.sendKeys(prodName);
 
 		// Assigned To Radio Button
@@ -91,7 +59,6 @@ public class CreateProducts {
 
 //		verify Opportunity
 		String actProdName = driver.findElement(By.id("dtlview_Product Name")).getText();
-
 		if (actProdName.equals(prodName)) {
 			System.out.println("Product created successfullyy !!!!");
 		} else {

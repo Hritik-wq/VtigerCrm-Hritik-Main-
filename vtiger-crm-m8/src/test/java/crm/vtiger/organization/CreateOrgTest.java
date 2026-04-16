@@ -1,38 +1,26 @@
 package crm.vtiger.organization;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Properties;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import generic_utility.FileUtility;
 
 public class CreateOrgTest {
 	public static void main(String[] args) throws InterruptedException, IOException {
+
 //		opening browser		
 		WebDriver driver = new ChromeDriver();
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
 
-//		step 1:> create a Java Rep. Object of the physical file
-		FileInputStream fis = new FileInputStream("./src/test/resources/cd.properties");
-
-//		step 2:> by using load(), load all the keys
-		Properties pObj = new Properties();
-		pObj.load(fis);
-
-//		step 3:> by using getProperty("key") get the value by passing "key"
-		String URL = pObj.getProperty("url");
-		String USERNAME = pObj.getProperty("un");
-		String PASSWORD = pObj.getProperty("pwd");
+//		We Used Generic Utility Package and Used Fileutility.java to get the data from Properties File in one go
+		FileUtility fUtil = new FileUtility();
+		String URL = fUtil.getDataFromPropFile("url");
+		String USERNAME = fUtil.getDataFromPropFile("un");
+		String PASSWORD = fUtil.getDataFromPropFile("pwd");
 
 		System.out.println(URL);
 		System.out.println(USERNAME);
@@ -58,36 +46,15 @@ public class CreateOrgTest {
 
 //		fill form
 		WebElement orgField = driver.findElement(By.name("accountname"));
-
 		
-		FileInputStream fis2 = new FileInputStream("./src/test/resources/testScriptData.xlsx");
+		// Load test data from Excel for organizationName
+		String orgName = fUtil.getDatafromExcelFile("testdata", 1, 1);
 
-		// Get the Access of Workbook
-		Workbook wb = WorkbookFactory.create(fis2);
-		
-		// Get access of Sheet
-		Sheet sheet = wb.getSheet("testdata");
-		
-		// Get access of Row
-		Row row = sheet.getRow(1);
-		
-		// Get access of Cell
-		Cell cell = row.getCell(1);
-
-		// Get the data
-		String data = cell.getStringCellValue();
-
-		System.out.println(data);
-
-		// To close the workbook
-		wb.close();
-		
-		String orgName = data;
 		orgField.sendKeys(orgName);
 
 		driver.findElement(By.cssSelector("input[type='button'][value='  Save  ']")).click();
 
-//		verify Opportunity
+		// verify opportunity
 		String actOppName = driver.findElement(By.id("dtlview_Organization Name")).getText();
 
 		if (actOppName.equals(orgName)) {
