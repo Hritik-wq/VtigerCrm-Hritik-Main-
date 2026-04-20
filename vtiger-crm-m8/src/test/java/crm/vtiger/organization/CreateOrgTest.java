@@ -1,20 +1,22 @@
 package crm.vtiger.organization;
 
 import java.io.IOException;
-import java.time.Duration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import generic_utility.FileUtility;
+import generic_utility.WebDriverUtility;
 
 public class CreateOrgTest {
 	public static void main(String[] args) throws InterruptedException, IOException {
 
 //		opening browser		
 		WebDriver driver = new ChromeDriver();
-		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		
+		WebDriverUtility wdUtil = new WebDriverUtility(driver);
+		wdUtil.maxWin();
+		wdUtil.waitForPageLoad();
 
 //		We Used Generic Utility Package and Used Fileutility.java to get the data from Properties File in one go
 		FileUtility fUtil = new FileUtility();
